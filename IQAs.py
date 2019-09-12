@@ -77,13 +77,16 @@ def _qindex(img1, img2, block_size=8):
     #print(sigma2_sq.shape)
     sigma12 = cv2.filter2D(img1_ * img2_, -1, window)[pad_topleft:-pad_bottomright, pad_topleft:-pad_bottomright] - mu1_mu2
 
-    # all = 1
+    # all = 1, include the case of simga == mu == 0
     qindex_map = np.ones(sigma12.shape)
     # sigma == 0 and mu != 0
     idx = ((sigma1_sq + sigma2_sq) == 0) * ((mu1_sq + mu2_sq) != 0)
     qindex_map[idx] = 2 * mu1_mu2[idx] / (mu1_sq + mu2_sq)[idx]
-    # sigma != 0
-    idx = (sigma1_sq + sigma2_sq) != 0
+    # sigma !=0 and mu == 0
+    idx = ((sigma1_sq + sigma2_sq) != 0) * ((mu1_sq + mu2_sq) == 0)
+    qindex_map[idx] = 2 * sigma12[idx] / (sigma1_sq + sigma2_sq)[idx]
+    # sigma != 0 and mu != 0
+    idx = ((sigma1_sq + sigma2_sq) != 0) * ((mu1_sq + mu2_sq) != 0)
     qindex_map[idx] =((2 * mu1_mu2[idx]) * (2 * sigma12[idx])) / (
         (mu1_sq + mu2_sq)[idx] * (sigma1_sq + sigma2_sq)[idx])
     return np.mean(qindex_map)
