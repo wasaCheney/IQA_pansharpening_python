@@ -25,7 +25,7 @@ def sam(img1, img2):
 
 
 def psnr(img1, img2, dynamic_range=255):
-    """PSNR metric, img uint8 if 225; uint16 if 2047"""
+    """PSNR metric, img uint8 if 255; uint16 if 2047"""
     if not  img1.shape == img2.shape:
         raise ValueError('Input images must have the same dimensions.')
     img1_ = img1.astype(np.float64)
